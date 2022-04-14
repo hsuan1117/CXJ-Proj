@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>槍砲彈藥查詢系統</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h1>槍砲彈藥查詢系統</h1>
+<label for="year">年分 (國立)</label>
+<select id="year">
+</select>
+<br/>
+<label for="month">月份</label>
+<select id="month">
+</select>
+<br/>
+<label for="area">地區</label>
+<select id="area"></select>
+<br/>
+<br/>
+<button id="submit">查詢</button>
+
+<div id="result" style="background-color: antiquewhite; border-radius: 5px; padding-top: 5px; padding-bottom: 5px;">
+
+</div>
+
+<script>
+    const area_value = ['新北市', '臺北市', '桃園市', '臺中市', '臺南市', '高雄市', '臺灣省', '福建省']
+
+    $(function () {
+        $('#year').append(new Option('請選擇', ''))
+        $('#month').append(new Option('請選擇', ''))
+        $('#area').append(new Option('請選擇', ''))
+        for (let i = 89; i < 111; i++) {
+            $('#year').append(new Option(i, i))
+        }
+        for (let i = 1; i <= 12; i++) {
+            $('#month').append(new Option(i, i))
+        }
+        for (let i = 0; i < area_value.length; i++) {
+            $('#area').append(new Option(area_value[i], i))
+        }
+    })
+
+    $('#submit').click(function () {
+        let year = $('#year').val();
+        let month = $('#month').val();
+        let area = $('#area').val();
+        $.ajax({
+            url: '/search',
+            type: 'POST',
+            data: {
+                year: year,
+                month: month,
+                area: area
+            },
+            success: function (data) {
+                $('#result').html(`
+                    <ul>
+                        <li>發生數: ${data[0]}</li>
+                        <li>破獲數: ${data[1]}</li>
+                    </ul>
+                `)
+            },
+            dataType: 'json'
+        })
+    })
+</script>
+</body>
+</html>
